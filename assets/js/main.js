@@ -2,7 +2,7 @@
    Portfolio Camille Chesneau — animations
    Bibliothèques chargées depuis un CDN (facultatives) :
    - Lenis : défilement fluide
-   - GSAP + SplitText : titres, écran de chargement, transitions
+   - GSAP + SplitText : titres, animation d'arrivée, transitions
    Sans connexion, le site fonctionne quand même, avec des effets plus simples.
    ========================================================= */
 (() => {
@@ -24,7 +24,7 @@
     del: k => { try { sessionStorage.removeItem(k); } catch (e) {} }
   };
   const fontsReady = Promise.race([document.fonts ? document.fonts.ready : Promise.resolve(), wait(1500)]);
-  // « gate » s'ouvre quand l'écran de chargement / la transition laisse voir la page
+  // « gate » s'ouvre quand l'animation d'arrivée / la transition laisse voir la page
   let openGate; const gate = new Promise(r => { openGate = r; });
 
   /* ---------- 0. Calques révélés par la bulle (copies inversées) ---------- */
@@ -111,55 +111,41 @@
   const startScroll = () => lenis && lenis.start();
 
   /* ---------- 3. Arrivée sur la page ---------- */
-  // a) première visite : écran de chargement avec compteur
-  function bootLoader() {
+  // a) première visite : sur l'accueil, on arrive ultra zoomé dans une lettre du nom et on dézoome jusqu'au nom entier,
+  //    puis la petite phrase, le menu et l'invitation à défiler arrivent (ailleurs : le rideau se lève)
+  let arrive = 0;   // 1 = zoom maximal dans le nom, 0 = nom entier (combiné au zoom du défilement)
+  function plainArrival() {
     store.set('cc-visited', '1');
-    const el = document.createElement('div');
-    el.className = 'loader'; el.setAttribute('aria-hidden', 'true');
-    el.innerHTML = `<div class="loader-panel loader-rose"></div>
-      <div class="loader-panel loader-main">
-        <div class="loader-top"><span>Camille Chesneau</span><span>Portfolio 2026</span></div>
-        <div class="loader-bottom">
-          <p class="loader-words"><span>Communication</span><span>Événementiel</span><span>Création</span><span>Bienvenue</span></p>
-          <p class="loader-count"><span>0</span><em>%</em></p>
-        </div>
-        <div class="loader-bar"><i></i></div>
-      </div>`;
-    document.body.prepend(el);
-    root.classList.remove('boot');
+    root.classList.remove('boot', 'first');
+    requestAnimationFrame(() => requestAnimationFrame(() => root.classList.add('loaded')));
+    return wait(380);
+  }
+  function bootIntro() {
+    const box = $('.intro');
+    if (!box || !$('.intro-cover', box) || location.hash) return plainArrival();
+    store.set('cc-visited', '1');
     stopScroll();
-    // on attend les polices du chargement pour éviter que les textes changent de forme
-    Promise.race([Promise.all(['600 1em Unbounded', '800 1em Unbounded', 'italic 1em "Instrument Serif"'].map(f => document.fonts ? document.fonts.load(f) : 0)), wait(1200)])
-      .catch(() => {}).then(() => el.classList.add('fonts-ok'));
-    const count = $('.loader-count span', el), line = $('.loader-bar i', el), words = $$('.loader-words span', el);
-    let w = 0; words[0].classList.add('on');
-    const cycle = setInterval(() => {
-      if (w >= words.length - 1) return;
-      words[w].classList.replace('on', 'out'); words[++w].classList.add('on');
-    }, 520);
-    // progression réelle : polices + images visibles au chargement
-    const imgs = $$('img').filter(i => i.loading !== 'lazy' && !i.closest('.reveal-layer'));
-    let done = 0; const total = imgs.length + 1, tick = () => { done++; };
-    imgs.forEach(i => { if (i.complete) done++; else { i.addEventListener('load', tick, { once: true }); i.addEventListener('error', tick, { once: true }); } });
-    fontsReady.then(tick);
-    const t0 = performance.now(), MIN = 2100, MAX = 6000;
-    let shown = 0, prev = t0;
+    arrive = 1;
+    // petits éléments : ils glissent et apparaissent (propriétés à part, pour ne pas gêner le zoom au défilement)
+    const ui = [...$$('.cover-kicker', box).map(el => ({ el, d: 22, p: 0 })), ...$$('.intro-hint', box).map(el => ({ el, d: 16, p: 0 })), ...$$('.nav').map(el => ({ el, d: -28, p: 0 }))];
+    const show = u => { u.el.style.translate = u.p < 1 ? `0 ${((1 - u.p) * u.d).toFixed(1)}px` : ''; u.el.style.filter = u.p < 1 ? `opacity(${u.p.toFixed(3)})` : ''; };
+    // le décor vu à travers les lettres recule lui aussi
+    const scenes = $$('.scene', box), back = { s: 1.3 };
+    const depth = () => scenes.forEach(sc => { sc.style.scale = back.s === 1 ? '' : back.s.toFixed(4); });
+    ui.forEach(show); depth();
+    root.classList.remove('boot', 'first'); root.classList.add('loaded');
     return new Promise(resolve => {
-      (function frame(now) {
-        const el2 = now - t0, target = el2 > MAX ? 1 : Math.min(done / total, el2 / MIN);
-        shown += (target - shown) * (1 - Math.exp(-(now - prev) / 160)); prev = now;
-        if (target === 1 && shown > .99) shown = 1;
-        count.textContent = Math.round(shown * 100);
-        line.style.transform = `scaleX(${shown.toFixed(4)})`;
-        if (shown < 1) { requestAnimationFrame(frame); return; }
-        clearInterval(cycle);
-        if (words[w].textContent !== 'Bienvenue') { words[w].classList.replace('on', 'out'); words[words.length - 1].classList.add('on'); }
-        G.timeline({ delay: .35, onComplete: () => el.remove() })
-          .to($$('.loader-top span, .loader-words, .loader-count', el), { yPercent: -120, opacity: 0, duration: .55, ease: 'power3.in', stagger: .05 })
-          .add(() => { root.classList.add('loaded'); root.classList.remove('first'); startScroll(); resolve(); }, '-=.05')
-          .to($('.loader-main', el), { yPercent: -100, duration: 1.1, ease: 'expo.inOut' }, '<')
-          .to($('.loader-rose', el), { yPercent: -100, duration: 1.1, ease: 'expo.inOut' }, '<.12');
-      })(t0);
+      Promise.race([Promise.all(['800 1em Unbounded', 'italic 1em "Instrument Serif"'].map(f => document.fonts ? document.fonts.load(f) : 0)), wait(1200)])
+        .catch(() => {}).then(() => {
+          const z = { v: 1 }, D = 2.6;
+          G.timeline({ delay: .15, onComplete: startScroll })
+            .to(z, { v: 0, duration: D, ease: 'power3.out', onUpdate: () => { arrive = z.v; update(); } }, 0)
+            .to(back, { s: 1, duration: D, ease: 'power3.out', onUpdate: depth }, 0)
+            .to(ui.filter(u => u.d === 22), { p: 1, duration: 1, ease: 'power3.out', onUpdate() { this.targets().forEach(show); } }, 1.2)
+            .to(ui.filter(u => u.d < 0), { p: 1, duration: 1, ease: 'power3.out', onUpdate() { this.targets().forEach(show); } }, 1.35)
+            .add(resolve, 1.3)
+            .to(ui.filter(u => u.d === 16), { p: 1, duration: .9, ease: 'power2.out', onUpdate() { this.targets().forEach(show); } }, 1.75);
+        });
     });
   }
   // b) on arrive depuis une carte : l'image s'est agrandie, elle se pose sur la couverture
@@ -199,14 +185,11 @@
     root.classList.remove('boot', 'first', 'vt'); root.classList.add('loaded'); store.set('cc-visited', '1');
     entry = Promise.resolve();
   } else if (root.classList.contains('first') && G) {
-    entry = bootLoader();
+    entry = bootIntro();
   } else if (root.classList.contains('vt')) {
     entry = arriveFromCard();
   } else {
-    store.set('cc-visited', '1');
-    root.classList.remove('boot', 'first');
-    requestAnimationFrame(() => requestAnimationFrame(() => root.classList.add('loaded')));
-    entry = wait(380);
+    entry = plainArrival();
   }
   entry.then(openGate);
 
@@ -317,6 +300,8 @@
     $$('.cover-svg', intro).forEach(svg => svg.setAttribute('viewBox', `0 0 ${w} ${h}`));
     $$('.cover-rect', intro).forEach(rc => { rc.setAttribute('width', w); rc.setAttribute('height', h); });
     const texts = $$('.cover-text', intro);
+    // on mesure le nom sans zoom : très agrandi, le navigateur le mesure mal (update() remet le zoom juste après)
+    I.zooms.forEach(g => g.removeAttribute('transform'));
     let fs = Math.min(w * .11, h * .3);
     texts.forEach(t => { t.setAttribute('font-size', fs); t.setAttribute('x', w / 2); t.setAttribute('y', h / 2 + fs * .36); });
     const len = texts[0].getComputedTextLength();
@@ -358,7 +343,7 @@
     if (I && !reduce) {
       const r = intro.getBoundingClientRect();
       const p = clamp(-r.top / (intro.offsetHeight - vh), 0, 1);
-      const e = ease(clamp(p / .7, 0, 1));
+      const e0 = ease(clamp(p / .7, 0, 1)), e = Math.max(e0, arrive);
       const s = Math.pow(90, e);
       const tr = `translate(${I.o.x} ${I.o.y}) scale(${s.toFixed(4)}) translate(${-I.o.x} ${-I.o.y})`;
       I.zooms.forEach(g => g.setAttribute('transform', tr));
@@ -366,7 +351,7 @@
       css(I.cover, 'opacity', fade.toFixed(3));
       css(I.cover, 'visibility', fade > 0 ? 'visible' : 'hidden');
       css(I.kick, 'opacity', (1 - clamp(p / .12, 0, 1)).toFixed(3));
-      css(I.scene, 'transform', `scale(${(1.25 - e * .25).toFixed(4)})`);
+      css(I.scene, 'transform', `scale(${(1.25 - e0 * .25).toFixed(4)})`);
       // les éléments arrivent par les côtés
       const e2 = ease(clamp((p - .35) / .4, 0, 1));
       css(I.text, 'transform', `translate3d(${(1 - e2) * -45}vw,0,0)`);
@@ -1033,7 +1018,7 @@ void main(){
   /* ---------- 15. Menu plein écran (mobile) ---------- */
   if (nav) {
     const links = [['À propos', 'index.html#apropos'], ['Parcours', 'index.html#parcours'], ['Réalisations', 'index.html#realisations'],
-      ['Compétences', 'index.html#competences'], ['Passions', 'passions.html'], ['Contact', 'index.html#contact']];
+      ['Passions', 'passions.html'], ['Contact', 'index.html#contact']];
     const btn = document.createElement('button');
     btn.type = 'button'; btn.className = 'burger';
     btn.setAttribute('aria-expanded', 'false'); btn.setAttribute('aria-controls', 'mmenu');

@@ -57,34 +57,13 @@ section{position:relative}
   transform:translateY(0);transition:transform .8s cubic-bezier(.75,0,.2,1)}
 .js.loaded .page-wipe{transform:translateY(-100%)}
 .js.leaving .page-wipe{transform:translateY(0)}
-/* Première visite (écran de chargement) ou arrivée depuis une carte : pas de rideau */
+/* Première visite (le nom se forme lettre par lettre) ou arrivée depuis une carte : pas de rideau */
 .js.first .page-wipe,.js.vt .page-wipe{display:none}
 .boot.first body::before,.boot.vt body::before{content:"";position:fixed;inset:0;z-index:400;background:var(--marine)}
 .boot.vt body::before{background:var(--vt-img) center/cover no-repeat,var(--marine)}
 .js.vt .cover img{visibility:hidden}
 .vt-overlay{position:fixed;z-index:350;top:0;left:0;width:100vw;height:100vh;overflow:hidden;pointer-events:none;background:var(--marine)}
 .vt-overlay img{width:100%;height:100%;object-fit:cover}
-
-/* ========== Écran de chargement (première visite) ========== */
-.loader{position:fixed;inset:0;z-index:400}
-.loader-panel{position:absolute;inset:0}
-.loader-rose{background:var(--rose)}
-.loader-main{background:var(--marine);color:var(--lavande);display:grid;grid-template-rows:auto 1fr;padding:clamp(1.25rem,3vw,2.4rem) var(--pad) clamp(1.6rem,4vw,3rem);overflow:hidden}
-/* textes masqués tant que les polices ne sont pas chargées (sinon ils « sautent ») */
-.loader-main > *{opacity:0;transition:opacity .5s ease}
-.loader.fonts-ok .loader-main > *{opacity:1}
-.loader-top{display:flex;justify-content:space-between;align-items:center;gap:1rem;font-family:var(--f-title);font-weight:600;font-size:clamp(.85rem,1.2vw,1rem);line-height:1.2;letter-spacing:-.01em}
-.loader-top span:last-child{font-family:var(--f-serif);font-style:italic;font-weight:400;font-size:1.25em;letter-spacing:0;color:var(--pervenche);white-space:nowrap}
-.loader-bottom{align-self:end;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:1rem 2rem}
-.loader-words{position:relative;height:1.25em;overflow:hidden;font-family:var(--f-serif);font-style:italic;font-size:clamp(1.6rem,min(4.2vw,7vh),3.6rem);line-height:1.25;color:var(--rose)}
-.loader-words span{position:absolute;left:0;top:0;transform:translateY(110%);transition:transform .7s var(--ease)}
-.loader-words span.on{transform:none}
-.loader-words span.out{transform:translateY(-110%)}
-/* le compteur reste entier quelle que soit la taille d'écran (limité par la largeur ET la hauteur) */
-.loader-count{font-family:var(--f-title);font-weight:800;font-size:clamp(4rem,min(15vw,26vh),12rem);line-height:.9;letter-spacing:-.05em;white-space:nowrap;padding-right:.04em}
-.loader-count em{font-family:var(--f-serif);font-style:italic;font-weight:400;font-size:.3em;letter-spacing:0;color:var(--rose);margin-left:.1em;vertical-align:top}
-.loader-bar{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(217,220,251,.15)}
-.loader-bar i{display:block;height:100%;background:var(--rose);transform-origin:0 50%;transform:scaleX(0)}
 
 /* ========== Barre de progression, navigation ========== */
 .progress{position:fixed;inset:0 0 auto 0;height:3px;background:var(--rose);transform-origin:0 50%;transform:scaleX(0);z-index:90}
@@ -262,10 +241,10 @@ body[data-theme="marine"] .fact .logo-white{opacity:1}
 /* « Qui suis-je » : texte et logos à gauche, photo détourée à droite sur une arche rose */
 .about-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:clamp(2rem,5vw,5rem);align-items:end}
 .about .facts{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);max-width:44rem;margin:clamp(3.5rem,8vh,6rem) 0 0;gap:clamp(1.5rem,4vw,3.5rem)}
-.about .fact{text-align:left;align-items:flex-start}
+.about .fact{text-align:center;align-items:center}   /* logo centré au-dessus de son texte */
 .about .fact .logo{max-width:230px;height:84px}
-.about .fact .logo img{object-position:left center}
-.about .fact p{margin:0}
+.about .fact .logo img{object-position:center}
+.about .fact p{margin:0 auto}
 .about-photo{position:relative;margin:0;width:min(100%,30rem);justify-self:end;padding-top:12%}
 .about-arch{position:absolute;left:0;right:0;bottom:0;height:76%;border-radius:999px 999px 32px 32px;
   background:linear-gradient(165deg,var(--rose) 0%,#FFC4A8 100%);box-shadow:0 40px 80px -45px rgba(15,26,74,.55)}
@@ -282,7 +261,7 @@ body[data-theme="marine"] .fact .logo-white{opacity:1}
 }
 @media (max-width:760px){
   .about .facts{grid-template-columns:1fr;margin-top:3rem}
-  .about .facts-sep{justify-self:start}
+  .about .facts-sep{justify-self:center}
   .about-badge{left:-.4rem;width:5.4rem}
 }
 @media (prefers-reduced-motion:reduce){.about-badge svg{animation:none}}
@@ -307,6 +286,7 @@ body[data-theme="marine"] .fact .logo-white{opacity:1}
 .step p{color:var(--muted);max-width:52ch}
 .step ul{margin-top:.6rem;padding-left:1.1rem;display:grid;gap:.45rem;color:var(--muted);max-width:60ch}
 .step li::marker{color:var(--rose)}
+.step li strong{color:var(--fg);font-weight:600}
 
 /* ========== Réalisations : défilement horizontal ========== */
 .hscroll-sticky{position:sticky;top:0;height:100vh;overflow:hidden;display:flex;flex-direction:column;justify-content:center}
@@ -391,6 +371,8 @@ body[data-theme="marine"] .fact .logo-white{opacity:1}
 
 /* ========== Contact ========== */
 .contact{min-height:100svh;display:flex;flex-direction:column;justify-content:center}
+/* « Mes coordonnées » tient sur une seule ligne, sur ordinateur comme sur téléphone */
+.contact .t-big{font-size:clamp(1.5rem,7.8vw,8rem);white-space:nowrap}
 .contact-row{display:flex;flex-wrap:wrap;align-items:center;gap:3rem;margin-top:3rem}
 .mail{display:inline-flex;align-items:center;justify-content:center;width:clamp(9rem,15vw,12rem);aspect-ratio:1;border-radius:50%;
   background:var(--rose);color:var(--marine);text-decoration:none;font-weight:600;text-align:center;transition:transform .4s var(--ease)}
@@ -950,8 +932,6 @@ body[data-theme="marine"] .fact .logo-white{opacity:1}
   .vfull-cap{bottom:4.6rem}
   .lightbox{padding:4.5rem 1rem 4rem}
   .lightbox .lb-prev,.lightbox .lb-next{top:auto;bottom:.7rem;margin-top:0}
-  .loader-bottom{grid-template-columns:minmax(0,1fr)}
-  .loader-count{justify-self:end;font-size:clamp(4rem,24vw,9rem)}
 }
 
 /* ========== Animations réduites (réglage système) ========== */
@@ -965,7 +945,7 @@ body[data-theme="marine"] .fact .logo-white{opacity:1}
   .js .w{opacity:1}
   .js .page-wipe{display:none}
   .js .t-title,.js .t-big,.js .p-hero h1,.js .proj-title{opacity:1}
-  .boot body::before,.loader{display:none}
+  .boot body::before{display:none}
   .js.vt .cover img{visibility:visible}
   .nc-e{transform:none!important}
   .marquee-pin{height:auto}
