@@ -180,9 +180,16 @@
       Promise.race([Promise.all([img.decode ? img.decode().catch(() => {}) : 0, fontsReady]), wait(1200)]).then(() => {
         update();
         const r = cover.getBoundingClientRect(), k = r.width / (cover.offsetWidth || 1);
-        const rad = (parseFloat(getComputedStyle(cover).borderTopLeftRadius) || 0) * k;
+        const cs = getComputedStyle(cover);
+        const rad = (parseFloat(cs.borderTopLeftRadius) || 0) * k;
+        // couverture encadrée (pages réalisations) : le cadre rose se dessine pendant que l'image se pose
+        const bw = (parseFloat(cs.borderTopWidth) || 0) * k, frame = {};
+        if (bw) {
+          Object.assign(ov.style, { borderStyle: 'solid', borderColor: cs.borderTopColor, borderWidth: '0px', background: cs.borderTopColor });
+          ['Top', 'Right', 'Bottom', 'Left'].forEach(s => { frame['border' + s + 'Width'] = bw; });
+        }
         G.timeline({ delay: .1, onComplete: () => { root.classList.remove('vt'); ov.remove(); startScroll(); } })
-          .to(ov, { top: r.top, left: r.left, width: r.width, height: r.height, borderRadius: rad, duration: 1.25, ease: 'expo.inOut' })
+          .to(ov, { top: r.top, left: r.left, width: r.width, height: r.height, borderRadius: rad, ...frame, duration: 1.25, ease: 'expo.inOut' })
           .add(resolve, .45);
       });
     });
@@ -272,7 +279,8 @@
   $$('[data-reveal]').forEach(el => revealIO.observe(el));
 
   /* ---------- 6. Titres révélés lettre par lettre (SplitText) ---------- */
-  const titles = $$('.t-title, .t-big, .p-hero h1, .proj-title');
+  // (sauf le titre du haut des pages réalisations, affiché tout de suite)
+  const titles = $$('.t-title, .t-big, .p-hero h1, .proj-title').filter(el => !el.closest('.p-hero--v2'));
   if (G && Split && !reduce) {
     fontsReady.then(() => {
       const io = new IntersectionObserver(entries => entries.forEach(en => {
@@ -684,11 +692,13 @@ void main(){
     const show = i => {
       idx = (i + list.length) % list.length;
       const im = list[idx];
-      big.src = im.currentSrc || im.src; big.alt = im.alt;
+      big.src = im.dataset.full || im.currentSrc || im.src; big.alt = im.alt;
       if (count) count.textContent = `${idx + 1} / ${list.length}`;
     };
     const open = im => {
-      list = $$('img', im.closest('[data-lightbox]'));
+      // les copies (data-clone, pour les bandes qui bouclent) ne comptent pas : on ouvre la photo d'origine
+      list = $$('img', im.closest('[data-lightbox]')).filter(x => !x.closest('[data-clone]'));
+      if (im.closest('[data-clone]')) im = list.find(x => x.dataset.i === im.dataset.i) || list[0];
       back = document.activeElement; show(list.indexOf(im));
       lb.classList.add('open'); stopScroll();
       const c = $('.lb-close', lb); if (c) c.focus({ preventScroll: true });
@@ -700,7 +710,7 @@ void main(){
     };
     $$('[data-lightbox] img').forEach(im => {
       const f = im.closest('figure');
-      f.tabIndex = 0; f.setAttribute('role', 'button'); f.setAttribute('aria-label', `Agrandir : ${im.alt}`);
+      if (!f.hasAttribute('data-clone')) { f.tabIndex = 0; f.setAttribute('role', 'button'); f.setAttribute('aria-label', `Agrandir : ${im.alt}`); }
       f.addEventListener('click', () => open(im));
       f.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(im); } });
     });
@@ -730,6 +740,97 @@ void main(){
       b.textContent = v.muted ? 'Activer le son' : 'Couper le son';
       if (!v.muted) { const p = v.play(); if (p) p.catch(() => {}); }
     });
+  });
+
+  // Passions › Filmer et monter : choisir une vidéo dans la pellicule, changer de série
+  $$('[data-yt]').forEach(yt => {
+    const screen = $('[data-yt-screen]', yt), img = $('img', screen), title = $('.yt-title', screen), dur = $('.yt-dur--big', screen), now = $('.yt-now', screen);
+    const items = $$('.yt-item', yt), tabs = $$('.yt-tab', yt);
+    const show = btn => {
+      $$('.yt-item button', yt).forEach(b => b.setAttribute('aria-pressed', b === btn));
+      screen.classList.add('swap');
+      const pre = new Image(); pre.src = `https://i.ytimg.com/vi/${btn.dataset.id}/maxresdefault.jpg`;
+      const put = () => {
+        img.src = pre.src; img.alt = `Miniature de la vidéo « ${btn.dataset.title} »`;
+        title.textContent = btn.dataset.title; dur.textContent = btn.dataset.dur;
+        screen.href = `https://www.youtube.com/watch?v=${btn.dataset.id}`;
+        requestAnimationFrame(() => screen.classList.remove('swap'));
+      };
+      pre.decode ? pre.decode().then(put, put) : (pre.onload = put);
+    };
+    $$('.yt-item button', yt).forEach(b => b.addEventListener('click', () => show(b)));
+    tabs.forEach(t => t.addEventListener('click', () => {
+      tabs.forEach(o => o.setAttribute('aria-pressed', o === t));
+      items.forEach(li => { li.hidden = li.dataset.set !== t.dataset.set; });
+      now.textContent = t.firstChild.textContent.trim();
+      const first = items.find(li => !li.hidden);
+      if (first) { show($('button', first)); $('.yt-list', yt).scrollTo({ left: 0, behavior: 'smooth' }); }
+    }));
+  });
+  // Passions › La photographie : les bandes défilent toutes seules, on peut les attraper pour les faire défiler (avec élan)
+  $$('.photo-wall .pw-row').forEach(row => {
+    const track = $('.pw-track', row), base = parseFloat(row.dataset.speed) || 40;
+    let half = 0, x = 0, v = -base, down = false, moved = 0, sx = 0, x0 = 0, lx = 0, lt = 0, dv = 0, visible = true, prev = performance.now();
+    const measure = () => { half = track.scrollWidth / 2; };
+    measure(); addEventListener('resize', measure);
+    $$('img', track).forEach(im => im.complete || im.addEventListener('load', measure, { once: true }));
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(row);
+    row.addEventListener('pointerdown', e => {
+      if (e.button !== 0) return;
+      down = true; moved = 0; sx = lx = e.clientX; x0 = x; lt = performance.now(); dv = 0;
+      row.classList.add('grabbing');
+    });
+    addEventListener('pointermove', e => {
+      if (!down) return;
+      const now = performance.now(), dt = Math.max(8, now - lt);
+      dv = dv * .5 + (e.clientX - lx) / dt * 1000 * .5; lx = e.clientX; lt = now;
+      moved = Math.max(moved, Math.abs(e.clientX - sx));
+      x = x0 + (e.clientX - sx);
+    });
+    const up = () => { if (!down) return; down = false; row.classList.remove('grabbing'); v = clamp(dv, -4000, 4000); };
+    addEventListener('pointerup', up); addEventListener('pointercancel', up);
+    // après un glissé, le clic ne doit pas ouvrir la photo
+    row.addEventListener('click', e => { if (moved > 6) { e.stopPropagation(); e.preventDefault(); } }, true);
+    (function loop(now) {
+      const dt = Math.min(.05, (now - prev) / 1000); prev = now;
+      if (!down && !reduce) { v += (-base - v) * (1 - Math.exp(-dt * 2.5)); x += v * dt; }   // revient doucement à sa vitesse
+      if (half && visible) {
+        x = ((x % half) + half) % half - half;
+        track.style.transform = `translate3d(${x.toFixed(2)}px,0,0)`;
+      }
+      requestAnimationFrame(loop);
+    })(prev);
+  });
+  // Passions › Le sport : les polaroïds tombent en place quand on arrive sur le mur
+  $$('.collage').forEach(c => {
+    const io = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      io.disconnect();
+      gate.then(() => { c.classList.add('in'); setTimeout(() => c.classList.add('settled'), 1800); });
+    }, { threshold: .2 });
+    io.observe(c);
+  });
+  /* ---------- 13 ter. Mes outils du quotidien : les logos montent un par un pendant le défilement ---------- */
+  $$('[data-tools-rise]').forEach(pin => {
+    const chips = $$('.tool-chip', pin);
+    if (reduce || !chips.length) return;
+    const n = chips.length, span = .2, step = (.9 - span) / Math.max(1, n - 1);
+    const ease = t => 1 - Math.pow(1 - t, 3);
+    let raf = 0;
+    const paint = () => {
+      raf = 0;
+      const r = pin.getBoundingClientRect();
+      const p = clamp(-r.top / ((pin.offsetHeight - innerHeight) || 1), 0, 1);
+      chips.forEach(c => {
+        const o = parseFloat(c.style.getPropertyValue('--o')) || 0;
+        const t = clamp((p - .04 - o * step) / span, 0, 1);
+        c.style.setProperty('--t', ease(t).toFixed(4));
+      });
+    };
+    const ask = () => { if (!raf) raf = requestAnimationFrame(paint); };
+    addEventListener('scroll', ask, { passive: true });
+    addEventListener('resize', ask);
+    paint();
   });
 
   /* ---------- 13 bis. Bande des outils : bloquée pendant le scroll, défilement continu, à glisser ---------- */
@@ -796,6 +897,24 @@ void main(){
   /* ---------- 14. Pages catégories ---------- */
   // nombre de projets affiché en haut de page
   $$('[data-proj-count]').forEach(el => { el.textContent = $$('.proj').length; });
+  // sommaire du haut de page : un bouton par projet (se met à jour tout seul)
+  $$('[data-toc]').forEach(nav => {
+    const items = $$('.proj[id]').map(p => {
+      const n = $('.proj-n', p), t = $('.proj-title', p);
+      return t ? `<a href="#${p.id}"><span>${n ? n.textContent.trim() : ''}</span>${t.textContent.trim()}</a>` : '';
+    }).join('');
+    if (items) nav.innerHTML = `<span class="ph-toc-label">À découvrir</span><div class="ph-toc-list">${items}</div>`;
+  });
+  // logos des outils utilisés dans les projets de la page (sans doublon)
+  $$('[data-tools]').forEach(box => {
+    const seen = new Set();
+    $$('.proj-tools img').forEach(img => {
+      const k = img.getAttribute('src');
+      if (seen.has(k)) return; seen.add(k);
+      const c = img.cloneNode(); c.removeAttribute('width'); c.removeAttribute('height'); box.append(c);
+    });
+    if (!seen.size) box.remove();
+  });
   // lecteur vidéo : lecture automatique (sans le son, règle des navigateurs) quand la vidéo est à l'écran,
   // pause dès qu'on passe à une autre ; boutons « son » et « plein écran »
   const players = $$('.player');

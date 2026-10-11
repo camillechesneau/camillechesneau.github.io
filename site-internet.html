@@ -10,14 +10,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300..800&family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=20261009f">
+<link rel="stylesheet" href="assets/css/style.css?v=20261011zl">
 </head>
-<body data-theme="marine">
+<body data-theme="brume">
 <div class="page-wipe" aria-hidden="true"></div>
 <div class="progress" aria-hidden="true"></div>
 <div class="cursor" aria-hidden="true"><span>Voir</span></div>
 <nav class="nav" aria-label="Navigation principale">
-  <a class="brand" href="index.html">C. Chesneau</a>
+  <a class="brand" href="index.html">Accueil</a>
   <ul>
     <li><a href="index.html#apropos">À propos</a></li>
     <li><a href="index.html#realisations" aria-current="page">Réalisations</a></li>
@@ -27,26 +27,40 @@
 </nav>
 
 <main>
-  <section class="p-hero" data-theme="marine">
-    <a class="back" href="index.html#realisations">← Toutes les réalisations</a>
-    <p class="cat" data-reveal>Réalisations · 06 / 06</p>
-    <h1>Site internet</h1>
-    <div class="p-sum" data-reveal style="--d:.2s">
-      <p class="p-intro">Conception et design de sites, sur ordinateur et sur mobile.</p>
-      <p class="p-count"><span data-proj-count>0</span> projets</p>
+  <section class="p-hero p-hero--v2" data-theme="brume">
+    <div class="ph-top">
+      <a class="back" href="index.html#realisations">← Toutes les réalisations</a>
+      <ul class="p-index cat-nav" aria-label="Catégories de réalisations">
+        <li><a href="videos.html">Montage</a></li>
+        <li><a href="affiches-perso.html">Affiches perso</a></li>
+        <li><a href="affiches-ecole.html">Affiches école</a></li>
+        <li><a href="motion-design.html">Motion design</a></li>
+        <li><a href="packagings.html">Packagings</a></li>
+        <li><a href="site-internet.html" aria-current="page">Site internet</a></li>
+      </ul>
     </div>
-    <ul class="p-index cat-nav" aria-label="Catégories de réalisations" data-reveal style="--d:.3s">
-      <li><a href="videos.html">Montage</a></li>
-      <li><a href="affiches-perso.html">Affiches perso</a></li>
-      <li><a href="affiches-ecole.html">Affiches école</a></li>
-      <li><a href="motion-design.html">Motion design</a></li>
-      <li><a href="packagings.html">Packagings</a></li>
-      <li><a href="site-internet.html" aria-current="page">Site internet</a></li>
-    </ul>
+    <div class="ph-grid">
+      <div class="ph-text">
+        <p class="cat ph-kicker">Réalisations · 06 / 06</p>
+        <h1>Site internet</h1>
+        <p class="p-intro">Conception et design de sites, sur ordinateur et sur mobile.</p>
+        <div class="ph-facts">
+          <p class="p-count"><span data-proj-count>0</span> projets</p>
+          <!-- les logos des outils utilisés dans les projets s'affichent ici tout seuls -->
+          <div class="ph-tools" data-tools></div>
+        </div>
+        <!-- le sommaire des projets de la page se remplit tout seul -->
+        <nav class="ph-toc" aria-label="Projets de cette page" data-toc></nav>
+      </div>
+      <div class="ph-visual">
+        <span class="ph-card-back" aria-hidden="true"></span>
+      <!-- Image principale : remplacez images/site-internet/couverture.jpg (c'est aussi l'image de la carte sur l'accueil) -->
+        <figure class="cover"><img src="images/site-internet/couverture.jpg" alt="Site internet, aperçu des réalisations"></figure>
+        <span class="ph-badge" aria-hidden="true"><svg viewBox="0 0 120 120"><defs><path id="ph-circle" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0"></path></defs><text><textPath href="#ph-circle">Camille Chesneau ✦ Réalisations ✦ Portfolio ✦ </textPath></text></svg><i>✦</i></span>
+      </div>
+    </div>
+    <div class="ph-ribbon" aria-hidden="true"><div class="ph-ribbon-track"><span>Site internet</span><i>✦</i><span>Site internet</span><i>✦</i><span>Site internet</span><i>✦</i><span>Site internet</span><i>✦</i><span>Site internet</span><i>✦</i><span>Site internet</span><i>✦</i><span>Site internet</span><i>✦</i><span>Site internet</span><i>✦</i><span>Site internet</span><i>✦</i><span>Site internet</span><i>✦</i><span>Site internet</span><i>✦</i><span>Site internet</span><i>✦</i><span>Site internet</span><i>✦</i><span>Site internet</span><i>✦</i><span>Site internet</span><i>✦</i><span>Site internet</span><i>✦</i><span>Site internet</span><i>✦</i><span>Site internet</span><i>✦</i><span>Site internet</span><i>✦</i><span>Site internet</span><i>✦</i><span>Site internet</span><i>✦</i><span>Site internet</span><i>✦</i><span>Site internet</span><i>✦</i><span>Site internet</span><i>✦</i></div></div>
   </section>
-
-  <!-- Image principale : remplacez images/site-internet/couverture.jpg (c'est aussi l'image de la carte sur l'accueil) -->
-  <figure class="cover" data-cover><img src="images/site-internet/couverture.jpg" alt="Site internet, aperçu des réalisations"></figure>
 
   <!-- PROJETS
        Pour ajouter un projet : copiez tout un bloc <article> … </article> et changez le numéro.
@@ -68,12 +82,12 @@
       <div class="proj-media">
         <div class="site-show">
           <!-- Capture de la page entière : survolez pour la faire défiler -->
-          <div class="browser" data-cursor="Défiler">
+          <div class="browser">
             <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span>ujv44.fr</span></div>
-            <div class="browser-screen"><img src="images/site-internet/projet-1-ordinateur.jpg" alt="Université Jules Verne, version ordinateur" loading="lazy"></div>
+            <div class="browser-screen"><img src="images/site-internet/projet-1-ordinateur.jpg?v=2" alt="Université Jules Verne, version ordinateur" loading="lazy"></div>
           </div>
-          <div class="phone" data-cursor="Défiler">
-            <div class="phone-screen"><img src="images/site-internet/projet-1-mobile.jpg" alt="Université Jules Verne, version mobile" loading="lazy"></div>
+          <div class="phone">
+            <div class="phone-screen"><img src="images/site-internet/projet-1-mobile.jpg?v=2" alt="Université Jules Verne, version mobile" loading="lazy"></div>
           </div>
         </div>
         <a class="btn site-link" href="https://ujv44.fr/" target="_blank" rel="noopener">Voir le site en ligne ↗</a>
@@ -95,12 +109,12 @@
       <div class="proj-media">
         <div class="site-show">
           <!-- Capture de la page entière : survolez pour la faire défiler -->
-          <div class="browser" data-cursor="Défiler">
+          <div class="browser">
             <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span>medef-44.fr/fr</span></div>
-            <div class="browser-screen"><img src="images/site-internet/projet-2-ordinateur.jpg" alt="Site du MEDEF Loire-Atlantique, version ordinateur" loading="lazy"></div>
+            <div class="browser-screen"><img src="images/site-internet/projet-2-ordinateur.jpg?v=2" alt="Site du MEDEF Loire-Atlantique, version ordinateur" loading="lazy"></div>
           </div>
-          <div class="phone" data-cursor="Défiler">
-            <div class="phone-screen"><img src="images/site-internet/projet-2-mobile.jpg" alt="Site du MEDEF Loire-Atlantique, version mobile" loading="lazy"></div>
+          <div class="phone">
+            <div class="phone-screen"><img src="images/site-internet/projet-2-mobile.jpg?v=2" alt="Site du MEDEF Loire-Atlantique, version mobile" loading="lazy"></div>
           </div>
         </div>
         <a class="btn site-link" href="https://www.medef-44.fr/fr/" target="_blank" rel="noopener">Voir le site en ligne ↗</a>
@@ -110,7 +124,7 @@
 
   <section data-theme="pervenche">
     <!-- Lien vers la catégorie suivante : à droite, l'aperçu de la page s'ouvre au survol ; au clic il s'agrandit et devient la couverture de la page -->
-    <a class="next" href="videos.html" data-cursor="Ouvrir">
+    <a class="next" href="videos.html">
       <span class="next-top"><span class="serif">Catégorie suivante</span><span class="next-count">01 / 06</span></span>
       <span class="next-row"><span class="next-title">Montage</span><span class="next-side" aria-hidden="true"><span class="next-preview"><img src="images/videos/couverture.jpg?v=2" alt="" loading="lazy"></span><span class="next-arrow">→</span></span></span>
     </a>
@@ -121,6 +135,6 @@
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/SplitText.min.js"></script>
-<script src="assets/js/main.js?v=20261009f"></script>
+<script src="assets/js/main.js?v=20261011zl"></script>
 </body>
 </html>

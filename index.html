@@ -10,14 +10,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300..800&family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css?v=20261009f">
+<link rel="stylesheet" href="assets/css/style.css?v=20261011zl">
 </head>
 <body data-theme="marine">
 <div class="page-wipe" aria-hidden="true"></div>
 <div class="progress" aria-hidden="true"></div>
 <div class="cursor" aria-hidden="true"><span>Voir</span></div>
 <nav class="nav" aria-label="Navigation principale">
-  <a class="brand" href="index.html">C. Chesneau</a>
+  <a class="brand" href="index.html">Accueil</a>
   <ul>
     <li><a href="index.html#apropos">À propos</a></li>
     <li><a href="index.html#realisations">Réalisations</a></li>
@@ -39,7 +39,7 @@
         </div>
         <div class="portrait-wrap">
           <!-- Votre photo : remplacez images/accueil/photo-camille.jpg (format portrait) -->
-          <figure class="portrait" data-cursor="Coucou"><img src="images/accueil/photo-camille.jpg" alt="Portrait de Camille Chesneau"></figure>
+          <figure class="portrait"><img src="images/accueil/photo-camille.jpg" alt="Portrait de Camille Chesneau"></figure>
         </div>
       </div>
       <!-- Écran d'entrée : on zoome à travers les lettres du nom pour découvrir la page -->
@@ -60,20 +60,30 @@
   </section>
 
   <!-- QUI JE SUIS -->
-  <section class="wrap" id="apropos" data-theme="brume">
-    <h2 class="t-title" data-reveal>Qui <em>suis-je</em></h2>
-    <p class="about-text" data-words>J'ai 20 ans et je suis étudiante en MBA communication et événementiel à l'ISEG Nantes. En alternance au MEDEF Loire-Atlantique, je travaille au sein du pôle communication événementiel.</p>
-    <div class="facts">
-      <!-- Logos : version couleur sur fond clair, version blanche quand le fond devient bleu marine -->
-      <div class="fact" data-reveal>
-        <div class="logo"><img class="logo-color" src="images/logos/logo-medef-couleur.png" alt="Logo du MEDEF Loire-Atlantique"><img class="logo-white" src="images/logos/logo-medef.png" alt=""></div>
-        <p>Alternante au pôle communication événementiel.</p>
+  <section class="wrap about" id="apropos" data-theme="brume">
+    <div class="about-grid">
+      <div class="about-main">
+        <h2 class="t-title" data-reveal>Qui <em>suis-je</em></h2>
+        <p class="about-text" data-words>J'ai 20 ans et je suis étudiante en MBA communication et événementiel à l'ISEG Nantes. En alternance au MEDEF Loire-Atlantique, je travaille au sein du pôle communication événementiel.</p>
+        <div class="facts">
+          <!-- Logos : version couleur sur fond clair, version blanche quand le fond devient bleu marine -->
+          <div class="fact" data-reveal>
+            <div class="logo"><img class="logo-color" src="images/logos/logo-medef-couleur.png" alt="Logo du MEDEF Loire-Atlantique"><img class="logo-white" src="images/logos/logo-medef.png" alt=""></div>
+            <p>Alternante au pôle communication événementiel.</p>
+          </div>
+          <div class="facts-sep" aria-hidden="true"></div>
+          <div class="fact" data-reveal style="--d:.12s">
+            <div class="logo"><img class="logo-color" src="images/logos/logo-iseg-couleur.png" alt="Logo de l'ISEG"><img class="logo-white" src="images/logos/logo-iseg.png" alt=""></div>
+            <p>MBA communication et événementiel.</p>
+          </div>
+        </div>
       </div>
-      <div class="facts-sep" aria-hidden="true"></div>
-      <div class="fact" data-reveal style="--d:.12s">
-        <div class="logo"><img class="logo-color" src="images/logos/logo-iseg-couleur.png" alt="Logo de l'ISEG"><img class="logo-white" src="images/logos/logo-iseg.png" alt=""></div>
-        <p>MBA communication et événementiel.</p>
-      </div>
+      <!-- Photo détourée (fond transparent) : remplacez images/accueil/camille-detouree.png -->
+      <figure class="about-photo" data-reveal style="--d:.15s">
+        <span class="about-arch" aria-hidden="true"></span>
+        <img src="images/accueil/camille-detouree.png" alt="Camille Chesneau, souriante, casquette bleue et t-shirt blanc" width="762" height="1300" loading="lazy">
+        <span class="about-badge" aria-hidden="true"><svg viewBox="0 0 120 120"><defs><path id="about-circle" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0"></path></defs><text><textPath href="#about-circle">Communication ✦ Événementiel ✦ Nantes ✦ </textPath></text></svg><i>✦</i></span>
+      </figure>
     </div>
   </section>
 
@@ -82,7 +92,7 @@
     <h2 class="t-title" data-reveal>Mon <em>parcours</em></h2>
     <div class="timeline">
       <div class="timeline-line"></div><div class="timeline-fill"></div>
-      <div class="step" data-reveal><p class="when">Depuis 2026</p><h3>Alternance au MEDEF <span class="nowrap">Loire-Atlantique</span></h3>
+      <div class="step"><p class="when">Depuis 2026</p><h3>Alternance au MEDEF <span class="nowrap">Loire-Atlantique</span></h3>
         <p>Pôle communication et événementiel :</p>
         <ul>
           <li>Je travaille en collaboration avec les chargés de communication et d'événements, en étant pleinement intégrée à l'équipe.</li>
@@ -91,9 +101,9 @@
           <li>Je participe à la conception et à l'organisation des événements.</li>
         </ul>
       </div>
-      <div class="step" data-reveal><p class="when">Depuis 2026</p><h3>MBA communication et événementiel, ISEG Nantes</h3></div>
-      <div class="step" data-reveal><p class="when">2023 à 2026</p><h3>Bachelor en communication, marketing et événementiel, ISEG Nantes</h3><p>Majeure création.</p></div>
-      <div class="step" data-reveal><p class="when">2023</p><h3>Bac STMG à Saint-Dominique</h3><p>Option marketing.</p></div>
+      <div class="step"><p class="when">Depuis 2026</p><h3>MBA communication et événementiel, ISEG Nantes</h3></div>
+      <div class="step"><p class="when">2023 à 2026</p><h3>Bachelor en communication, marketing et événementiel, ISEG Nantes</h3><p>Majeure création.</p></div>
+      <div class="step"><p class="when">2023</p><h3>Bac STMG à Saint-Dominique</h3><p>Option marketing.</p></div>
     </div>
   </section>
 
@@ -105,27 +115,27 @@
         <p class="counter" aria-live="polite"><span data-count>1</span> sur <span data-total>6</span></p>
       </div>
       <div class="track">
-        <a class="card" href="videos.html" data-cursor="Voir">
+        <a class="card" href="videos.html">
           <div class="media"><img src="images/videos/couverture.jpg?v=2" alt="Montage" loading="lazy"></div>
           <div class="meta"><h3>Montage</h3><p>Tournage et montage</p></div>
         </a>
-        <a class="card" href="affiches-perso.html" data-cursor="Voir">
-          <div class="media"><img src="images/affiches-perso/couverture.jpg?v=2" alt="Affiches perso" loading="lazy"></div>
+        <a class="card" href="affiches-perso.html">
+          <div class="media"><img src="images/affiches-perso/couverture.jpg?v=3" alt="Affiches perso" loading="lazy"></div>
           <div class="meta"><h3>Affiches perso</h3><p>Création libre</p></div>
         </a>
-        <a class="card" href="affiches-ecole.html" data-cursor="Voir">
-          <div class="media"><img src="images/affiches-ecole/couverture.jpg" alt="Affiches école" loading="lazy"></div>
+        <a class="card" href="affiches-ecole.html">
+          <div class="media"><img src="images/affiches-ecole/couverture.jpg?v=3" alt="Affiches école" loading="lazy"></div>
           <div class="meta"><h3>Affiches école</h3><p>Projets ISEG</p></div>
         </a>
-        <a class="card" href="motion-design.html" data-cursor="Voir">
+        <a class="card" href="motion-design.html">
           <div class="media"><img src="images/motion-design/couverture.gif" alt="Motion design" loading="lazy"></div>
           <div class="meta"><h3>Motion design</h3><p>Animation</p></div>
         </a>
-        <a class="card" href="packagings.html" data-cursor="Voir">
-          <div class="media"><img src="images/packagings/couverture.jpg" alt="Packagings" loading="lazy"></div>
+        <a class="card" href="packagings.html">
+          <div class="media"><img src="images/packagings/couverture.jpg?v=2" alt="Packagings" loading="lazy"></div>
           <div class="meta"><h3>Packagings</h3><p>Design produit</p></div>
         </a>
-        <a class="card" href="site-internet.html" data-cursor="Voir">
+        <a class="card" href="site-internet.html">
           <div class="media"><img src="images/site-internet/couverture.jpg" alt="Site internet" loading="lazy"></div>
           <div class="meta"><h3>Site internet</h3><p>Web design</p></div>
         </a>
@@ -143,31 +153,31 @@
       <div class="skill" data-reveal><h3>Création visuelle</h3><p>Affiches, visuels pour les réseaux, kakémonos et supports print.</p></div>
       <div class="skill" data-reveal><h3>Relations et partenariats</h3><p>Échanges avec les adhérents, intervenants, partenaires et prestataires.</p></div>
     </div>
-    <!-- Bande des outils : elle se bloque à l'écran pendant qu'on fait défiler (comme les réalisations),
-         défile en continu et se fait glisser à la souris.
-         Pour ajouter un outil : copiez une ligne <li> et mettez son logo dans images/outils/ -->
-    <div class="marquee-pin">
-      <div class="marquee-sticky">
-        <h3 class="t-title marquee-label">Mes outils <em>du quotidien</em></h3>
-        <div class="marquee-stage">
-          <div class="marquee-ribbon" aria-hidden="true"></div>
-          <div class="marquee" data-cursor="Glisser">
-            <ul class="marquee-track" aria-label="Mes outils">
-              <li class="tool"><img src="images/outils/canva.svg" alt="Canva" draggable="false"></li>
-              <li class="tool"><img src="images/outils/adobe.svg" alt="Suite Adobe" draggable="false"></li>
-              <li class="tool"><img src="images/outils/wordpress.svg" alt="WordPress" class="on-dark" draggable="false"></li>
-              <li class="tool"><img src="images/outils/final-cut-pro.png" alt="Final Cut Pro" draggable="false"></li>
-              <li class="tool"><img src="images/outils/capcut.svg" alt="CapCut" draggable="false"></li>
-              <li class="tool"><img src="images/outils/chatgpt.svg" alt="ChatGPT" draggable="false"></li>
-              <li class="tool"><img src="images/outils/notion.svg" alt="Notion" draggable="false"></li>
-              <li class="tool"><img src="images/outils/linkedin.svg" alt="LinkedIn" draggable="false"></li>
-              <li class="tool"><img src="images/outils/office.svg" alt="Pack Office" draggable="false"></li>
-              <li class="tool"><img src="images/outils/claude.svg" alt="Claude" draggable="false"></li>
-            </ul>
-          </div>
-        </div>
-      </div>
+  </section>
+
+  <section class="tools-section" id="outils" data-theme="pervenche">
+  <!-- Mes outils du quotidien : pendant qu'on fait défiler, les logos montent un par un depuis le bas
+       et se posent en désordre autour du titre.
+       Pour ajouter un outil : copiez une ligne <li>, mettez son logo dans images/outils/ et choisissez sa place :
+       --x / --y = position sur ordinateur (en %), --mx / --my = position sur téléphone, --r = inclinaison,
+       --o = ordre d'apparition (0 = le premier). -->
+  <div class="tools-pin" data-tools-rise>
+    <div class="tools-sticky">
+      <h3 class="t-title tools-label">Mes outils<br><em>du quotidien</em></h3>
+      <ul class="tools-cloud" aria-label="Mes outils">
+      <li class="tool-chip" style="--x:12%;--y:24%;--mx:16%;--my:14%;--r:-8deg;--o:2"><img src="images/outils/canva.svg" alt="Canva" draggable="false"></li>
+      <li class="tool-chip" style="--x:33%;--y:13%;--mx:50%;--my:10%;--r:6deg;--o:5"><img src="images/outils/adobe.svg" alt="Suite Adobe" draggable="false"></li>
+      <li class="tool-chip" style="--x:58%;--y:17%;--mx:84%;--my:15%;--r:-5deg;--o:7"><img src="images/outils/wordpress.svg" alt="WordPress" draggable="false"></li>
+      <li class="tool-chip" style="--x:83%;--y:15%;--mx:28%;--my:27%;--r:9deg;--o:0"><img src="images/outils/final-cut-pro.png" alt="Final Cut Pro" draggable="false"></li>
+      <li class="tool-chip" style="--x:90%;--y:45%;--mx:72%;--my:28%;--r:-10deg;--o:9"><img src="images/outils/capcut.svg" alt="CapCut" draggable="false"></li>
+      <li class="tool-chip" style="--x:8%;--y:58%;--mx:16%;--my:74%;--r:7deg;--o:4"><img src="images/outils/chatgpt.svg" alt="ChatGPT" draggable="false"></li>
+      <li class="tool-chip" style="--x:24%;--y:82%;--mx:50%;--my:72%;--r:-6deg;--o:8"><img src="images/outils/notion.svg" alt="Notion" draggable="false"></li>
+      <li class="tool-chip" style="--x:50%;--y:84%;--mx:84%;--my:76%;--r:10deg;--o:1"><img src="images/outils/linkedin.svg" alt="LinkedIn" draggable="false"></li>
+      <li class="tool-chip" style="--x:74%;--y:80%;--mx:30%;--my:88%;--r:-9deg;--o:6"><img src="images/outils/office.svg" alt="Pack Office" draggable="false"></li>
+      <li class="tool-chip" style="--x:92%;--y:72%;--mx:70%;--my:89%;--r:5deg;--o:3"><img src="images/outils/claude.svg" alt="Claude" draggable="false"></li>
+      </ul>
     </div>
+  </div>
   </section>
 
   <!-- APERÇU PASSIONS -->
@@ -175,7 +185,7 @@
     <div data-reveal>
       <h2 class="t-title">Ce qui <em>m'anime</em></h2>
       <p class="lead" style="margin-top:1.5rem;color:var(--muted)">Et si on parlait un peu moins travail ? Photos, vidéos, souvenirs : découvrez mes passions !</p>
-      <a class="btn" href="passions.html" data-cursor="Entrer">Découvrir mes passions →</a>
+      <a class="btn" href="passions.html">Découvrir mes passions →</a>
     </div>
     <div class="teaser-pics" aria-hidden="true">
       <figure class="p1" data-parallax=".08"><img src="images/passions/passion-1-1.jpg" alt="" loading="lazy"></figure>
@@ -188,7 +198,7 @@
   <section class="wrap contact" id="contact" data-theme="lavande">
     <h2 class="t-big" data-reveal>Contactez-moi !</h2>
     <div class="contact-row">
-      <a class="mail magnetic" href="mailto:camillechsne@gmail.com" data-cursor="Écrire">M'écrire</a>
+      <a class="mail magnetic" href="mailto:camillechsne@gmail.com">M'écrire</a>
       <ul class="contact-links">
         <li><span>Email</span><a href="mailto:camillechsne@gmail.com">camillechsne@gmail.com</a></li>
         <li><span>LinkedIn</span><a href="https://www.linkedin.com/" target="_blank" rel="noopener">Camille Chesneau</a></li>
@@ -202,6 +212,6 @@
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/SplitText.min.js"></script>
-<script src="assets/js/main.js?v=20261009f"></script>
+<script src="assets/js/main.js?v=20261011zl"></script>
 </body>
 </html>
