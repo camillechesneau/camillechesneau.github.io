@@ -900,16 +900,53 @@ void main(){
     });
     if (!seen.size) box.remove();
   });
-  // lecteur vidéo : lecture automatique (sans le son, règle des navigateurs) quand la vidéo est à l'écran,
-  // pause dès qu'on passe à une autre ; boutons « son » et « plein écran »
+  // lecteur vidéo : lecture automatique quand la vidéo est à l'écran, pause dès qu'on passe à une autre ;
+  // boutons « son » et « plein écran »
+  // Page Montage (data-son-auto) : la vidéo se lance avec le son, et en passant à la suivante le son suit.
+  // Les navigateurs n'autorisent le son qu'après un premier clic sur le site : en attendant, la vidéo tourne
+  // sans le son et le bouton « Activer le son » pulse ; le premier clic (ou touche) sur la page lance le son.
   const players = $$('.player');
+  const autoSound = !!$('[data-son-auto]');
+  let wantSound = autoSound, current = null;
+  const hasSound = p => !!$('.pl-sound', p);
+  const blocked = (p, on) => p.classList.toggle('sound-blocked', on);
+  function startPlayer(p) {
+    const v = $('video', p);
+    players.forEach(o => { if (o !== p) { const ov = $('video', o); ov.pause(); if (autoSound) ov.muted = true; blocked(o, false); } });
+    current = p; p.classList.remove('user-paused'); p.retries = 0;
+    if (autoSound && wantSound && hasSound(p)) {
+      v.muted = false;
+      const pr = v.play();
+      if (pr) pr.then(() => blocked(p, false)).catch(err => {
+        if (!err || err.name !== 'NotAllowedError') return;
+        v.muted = true; blocked(p, true);   // son refusé par le navigateur : on joue sans le son
+        const p2 = v.play(); if (p2) p2.catch(() => {});
+      });
+    } else { const pr = v.play(); if (pr) pr.catch(() => {}); }
+  }
+  // deux seuils : la vidéo démarre à 60 % visible ; à 95 %, elle repart si le navigateur l'a mise en pause
+  // pendant le défilement (vidéo sans le son) — sauf si c'est le visiteur qui l'a mise en pause
   const playerIO = new IntersectionObserver(entries => entries.forEach(e => {
-    const v = $('video', e.target);
-    if (e.isIntersecting) {
-      players.forEach(o => { if (o !== e.target) $('video', o).pause(); });
-      const pr = v.play(); if (pr) pr.catch(() => {});
-    } else v.pause();
-  }), { threshold: .6 });
+    const p = e.target, v = $('video', p);
+    if (e.isIntersecting && e.intersectionRatio >= .59) {
+      if (current !== p) startPlayer(p);
+      else if (v.paused && !v.ended && !p.classList.contains('user-paused')) { const pr = v.play(); if (pr) pr.catch(() => {}); }
+    } else if (current === p || !v.paused) {
+      v.pause(); blocked(p, false);
+      if (autoSound) v.muted = true;
+      if (current === p) current = null;
+    }
+  }), { threshold: [.6, .95] });
+  if (autoSound) {
+    // premier clic ou touche ailleurs sur la page : le son de la vidéo à l'écran démarre
+    const unlock = e => {
+      if (!wantSound || !current || !current.classList.contains('sound-blocked') || e.target.closest('.player, a')) return;
+      const p = current, v = $('video', p);
+      v.muted = false; blocked(p, false);
+      const pr = v.play(); if (pr) pr.catch(() => { v.muted = true; blocked(p, true); const p2 = v.play(); if (p2) p2.catch(() => {}); });
+    };
+    ['pointerdown', 'touchend', 'keydown'].forEach(t => addEventListener(t, unlock, true));
+  }
   players.forEach(p => {
     const v = $('video', p), snd = $('.pl-sound', p), full = $('.pl-full', p);
     if (!full) return;
@@ -922,6 +959,7 @@ void main(){
     };
     const toggleSound = () => {
       v.muted = !v.muted;
+      if (autoSound) { wantSound = !v.muted; blocked(p, false); }   // couper le son : les suivantes restent sans le son
       if (!v.muted) players.forEach(o => { if (o !== p) { const ov = $('video', o); ov.muted = true; o.classList.remove('sound-on'); } });
       syncSound();
       const pr = v.play(); if (pr) pr.catch(() => {});
@@ -930,9 +968,15 @@ void main(){
       snd.addEventListener('click', e => { e.stopPropagation(); toggleSound(); });
       v.addEventListener('click', toggleSound);   // un clic sur la vidéo active ou coupe le son
     } else {
-      v.addEventListener('click', () => { if (v.paused) { const pr = v.play(); if (pr) pr.catch(() => {}); } else v.pause(); });   // sans son : un clic met en pause ou relance
+      v.addEventListener('click', () => { p.classList.toggle('user-paused', !v.paused); if (v.paused) { const pr = v.play(); if (pr) pr.catch(() => {}); } else v.pause(); });   // sans son : un clic met en pause ou relance
     }
     v.addEventListener('volumechange', syncSound);
+    // le navigateur peut mettre en pause une vidéo sans le son pendant le défilement : on la relance (3 essais au plus),
+    // jamais quand c'est le visiteur qui l'a mise en pause ou qu'elle est en plein écran
+    v.addEventListener('pause', () => {
+      if (current !== p || p.classList.contains('user-paused') || v.controls || v.ended || (p.retries = (p.retries || 0) + 1) > 3) return;
+      setTimeout(() => { if (current === p && v.paused && !p.classList.contains('user-paused')) { const pr = v.play(); if (pr) pr.catch(() => {}); } }, 400);
+    });
     full.addEventListener('click', e => {
       e.stopPropagation();
       if (v.requestFullscreen) v.requestFullscreen().catch(() => {});
@@ -972,8 +1016,8 @@ void main(){
       if (!v.duration) { v.preload = 'metadata'; }   // pour connaître la durée avant la lecture
       playBtn.addEventListener('click', e => {
         e.stopPropagation();
-        if (v.paused) { players.forEach(o => { if (o !== p) $('video', o).pause(); }); const pr = v.play(); if (pr) pr.catch(() => {}); }
-        else v.pause();
+        if (v.paused) { p.classList.remove('user-paused'); players.forEach(o => { if (o !== p) $('video', o).pause(); }); const pr = v.play(); if (pr) pr.catch(() => {}); }
+        else { p.classList.add('user-paused'); v.pause(); }
       });
       paint();
     }
